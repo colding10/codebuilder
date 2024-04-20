@@ -129,6 +129,35 @@ def generate_patristo_spam() -> list:
     return l
 
 
+def generate_question(question, i, q):
+    if int(question[0]) <= 2:
+        return gen_rand_mono(i, q[i], "1" if question[0] == "2" else 0, question[1])
+    if int(question[0]) == 3:
+        return gen_rand_affine(i, q[i], question[1])
+    if int(question[0]) == 4:
+        return gen_rand_caesar(i, q[i], question[1])
+    if int(question[0]) == 5:
+        return gen_rand_vig(i, q[i], question[1])
+    if int(question[0]) == 6:
+        return genRand2x2Hill(i, q[i], question[1])
+    if int(question[0]) == 7:
+        return genRand3x3Hill(i, q[i], question[1])
+    if int(question[0]) == 8:
+        return gen_rand_xeno(i, q[i], question[1])
+    if int(question[0]) == 9:
+        return genRandBacon(i, q[i], question[1])
+    if int(question[0]) == 10:
+        return RSA(i, question[1])
+    if int(question[0]) == 11:
+        return genRandMorbit(i, q[i], question[1])
+    if int(question[0]) == 12:
+        return genRandPollux(i, q[i], question[1])
+    if int(question[0]) == 13:
+        return genRandPorta(i, q[i], question[1])
+    if int(question[0]) == 14:
+        return genRandRailFence(i, q[i], question[1])
+
+
 def genTest():
     na = input("Test Name: ")
     preset = input(
@@ -153,34 +182,7 @@ def genTest():
     test["CIPHER.0"] = gen_rand_mono(0, q[len(q) - 1], False, 0)
     for i in range(n):
         question = l[i].split(" ")
-        if int(question[0]) <= 2:
-            test["CIPHER." + str(i + 1)] = gen_rand_mono(
-                i, q[i], "1" if question[0] == "2" else 0, question[1]
-            )
-        if int(question[0]) == 3:
-            test["CIPHER." + str(i + 1)] = gen_rand_affine(i, q[i], question[1])
-        if int(question[0]) == 4:
-            test["CIPHER." + str(i + 1)] = gen_rand_caesar(i, q[i], question[1])
-        if int(question[0]) == 5:
-            test["CIPHER." + str(i + 1)] = gen_rand_vig(i, q[i], question[1])
-        if int(question[0]) == 6:
-            test["CIPHER." + str(i + 1)] = genRand2x2Hill(i, q[i], question[1])
-        if int(question[0]) == 7:
-            test["CIPHER." + str(i + 1)] = genRand3x3Hill(i, q[i], question[1])
-        if int(question[0]) == 8:
-            test["CIPHER." + str(i + 1)] = gen_rand_xeno(i, q[i], question[1])
-        if int(question[0]) == 9:
-            test["CIPHER." + str(i + 1)] = genRandBacon(i, q[i], question[1])
-        if int(question[0]) == 10:
-            test["CIPHER." + str(i + 1)] = RSA(i, question[1])
-        if int(question[0]) == 11:
-            test["CIPHER." + str(i + 1)] = genRandMorbit(i, q[i], question[1])
-        if int(question[0]) == 12:
-            test["CIPHER." + str(i + 1)] = genRandPollux(i, q[i], question[1])
-        if int(question[0]) == 13:
-            test["CIPHER." + str(i + 1)] = genRandPorta(i, q[i], question[1])
-        if int(question[0]) == 14:
-            test["CIPHER." + str(i + 1)] = genRandRailFence(i, q[i], question[1])
+        test["CIPHER." + str(i + 1)] = generate_question(question, i, q)
 
     with open("CodeTests/" + na + ".json", "w") as file:
         file.write(json.dumps(test))
