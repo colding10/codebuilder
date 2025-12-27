@@ -33,26 +33,45 @@ def generate_all_types_exam() -> list:
         "13 E",
         "13 D",
         "13 C",
-        "14 2",
-        "14 4",
-        "14 R",
+        "14 D",
+        "14 E",
+        "14 C",
+        "15 D",
+        "15 E",
+        "15 C",
+        "16 2",
+        "16 4",
+        "16 R",
+        "17 D",
+        "17 E",
+        "17 C",
     ]
     return l
 
 
 def generate_national_exam() -> list:
     aff = ["3 D", "3 E", "3 C"]
-    vig = ["5 D", "5 E", "5 C"]
-    hill2 = ["6 D", "6 E", "6 C"]
-    hill3 = ["7 D", "7 E"]
-    bac = ["9 L", "9 S", "9 W"]
-    mor = ["11 D", "11 C", "12 D", "12 C"]
+    atbash = ["4 D", "4 E"]
+    caesar = ["5 D", "5 E"]
+    vig = ["6 D", "6 E", "6 C"]
+    hill2 = ["7 D", "7 E", "7 C"]
+    hill3 = ["8 D", "8 E"]
+    bac = ["10 L", "10 S", "10 W"]
+    mor = ["12 D", "12 C", "13 D", "13 C"]
+    porta = ["14 D", "14 E", "14 C"]
+    runkey = ["15 D", "15 E", "15 C"]
+    checker = ["17 D", "17 E", "17 C"]
     random.shuffle(aff)
+    random.shuffle(atbash)
+    random.shuffle(caesar)
     random.shuffle(vig)
     random.shuffle(hill2)
     random.shuffle(hill3)
     random.shuffle(bac)
     random.shuffle(mor)
+    random.shuffle(porta)
+    random.shuffle(runkey)
+    random.shuffle(checker)
     l = [
         "1 2",
         "1 2",
@@ -69,28 +88,30 @@ def generate_national_exam() -> list:
         "2 0",
         aff[0],
         aff[1],
-        "4 D",
-        "4 E",
+        atbash[0],
+        caesar[0],
         vig[0],
         vig[1],
         hill2[0],
         hill2[1],
         hill3[0],
-        "8 1",
+        "9 1",
         bac[0],
         bac[1],
-        "10 D",
-        "10 E",
+        porta[0],
+        runkey[0],
+        "11 D",
         mor[0],
         mor[1],
         mor[2],
+        checker[0],
     ]
     return l
 
 
 def generate_regional_exam() -> list:
-    enc = ["3 E", "4 E", "5 E", "6 E"]
-    bac = ["9 L", "9 S", "9 W"]
+    enc = ["3 E", "4 E", "5 E", "6 E", "7 E"]
+    bac = ["10 L", "10 S", "10 W"]
     random.shuffle(enc)
     random.shuffle(bac)
     l = [
@@ -106,13 +127,15 @@ def generate_regional_exam() -> list:
         "4 D",
         "5 D",
         "6 D",
+        "7 D",
         enc[0],
         enc[1],
-        "8 1",
+        "9 1",
         bac[0],
         bac[1],
-        "11 D",
         "12 D",
+        "13 D",
+        "17 D",
     ]
     return l
 
@@ -135,27 +158,33 @@ def generate_question(question, i, q):
     if int(question[0]) == 3:
         return gen_rand_affine(i, q[i], question[1])
     if int(question[0]) == 4:
-        return gen_rand_caesar(i, q[i], question[1])
+        return gen_rand_atbash(i, q[i], question[1])
     if int(question[0]) == 5:
-        return gen_rand_vig(i, q[i], question[1])
+        return gen_rand_caesar(i, q[i], question[1])
     if int(question[0]) == 6:
-        return genRand2x2Hill(i, q[i], question[1])
+        return gen_rand_vig(i, q[i], question[1])
     if int(question[0]) == 7:
-        return genRand3x3Hill(i, q[i], question[1])
+        return genRand2x2Hill(i, q[i], question[1])
     if int(question[0]) == 8:
-        return gen_rand_xeno(i, q[i], question[1])
+        return genRand3x3Hill(i, q[i], question[1])
     if int(question[0]) == 9:
-        return genRandBacon(i, q[i], question[1])
+        return gen_rand_xeno(i, q[i], question[1])
     if int(question[0]) == 10:
-        return RSA(i, question[1])
+        return genRandBacon(i, q[i], question[1])
     if int(question[0]) == 11:
-        return genRandMorbit(i, q[i], question[1])
+        return RSA(i, question[1])
     if int(question[0]) == 12:
-        return genRandPollux(i, q[i], question[1])
+        return genRandMorbit(i, q[i], question[1])
     if int(question[0]) == 13:
-        return genRandPorta(i, q[i], question[1])
+        return genRandPollux(i, q[i], question[1])
     if int(question[0]) == 14:
+        return genRandPorta(i, q[i], question[1])
+    if int(question[0]) == 15:
+        return genRandRunningKey(i, q[i], question[1])
+    if int(question[0]) == 16:
         return genRandRailFence(i, q[i], question[1])
+    if int(question[0]) == 17:
+        return genRandCheckerboard(i, q[i], question[1])
 
 
 def genTest():

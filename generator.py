@@ -175,6 +175,34 @@ def gen_rand_affine(num, quote, enc):
     return x
 
 
+def gen_rand_atbash(num, quote, enc):
+    r = {}
+    for i in range(0, 26):
+        r[chr(i + 65)] = chr(90 - i)
+    x = {
+        "cipherString": quote,
+        "cipherType": "atbash",
+        "solclick1": -1,
+        "solclick2": -1,
+        "replacement": r,
+        "curlang": "en",
+        "editEntry": num,
+        "alphabetSource": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "alphabetDest": "ZYXWVUTSRQPONMLKJIHGFEDCBA",
+    }
+    if enc == "E":
+        x["operation"] = "encode"
+        x["points"] = 125
+        x["question"] = "<p>Encode this sentence with the Atbash cipher.</p>"
+    elif enc == "D":
+        x["operation"] = "decode"
+        x["points"] = 100
+        x["question"] = (
+            "<p>Decode this sentence which has been encoded with the Atbash cipher.</p>"
+        )
+    return x
+
+
 def gen_rand_caesar(num, quote, enc):
     a = random.randint(3, 24)
     r = {}
@@ -247,6 +275,47 @@ def gen_rand_vig(num, quote, enc):
             + ".</p>"
         )
         x["points"] = "175"
+    return x
+
+
+def genRandRunningKey(num, quote, enc):
+    quote = genQuoteLength(40, 70)
+    key = genQuoteLength(40, 70)
+    x = {
+        "cipherType": "runningkey",
+        "keyword": key,
+        "cipherString": quote,
+        "findString": "",
+        "curlang": "en",
+        "editEntry": str(num),
+    }
+    if enc == "E":
+        x["operation"] = "encode"
+        x["question"] = (
+            "<p>Encode this sentence with the Running-Key cipher using the key text: "
+            + key
+            + "</p>"
+        )
+        x["points"] = 250
+    if enc == "D":
+        x["operation"] = "decode"
+        x["question"] = (
+            "<p>Decode this sentence with the Running-Key cipher using the key text: "
+            + key
+            + "</p>"
+        )
+        x["points"] = 225
+    if enc == "C":
+        x["operation"] = "crypt"
+        crib_len = min(10, len(quote))
+        x["question"] = (
+            "<p>Decode this sentence with the Running-Key cipher. The first "
+            + str(crib_len)
+            + " characters of the plaintext are: "
+            + quote[:crib_len]
+            + "</p>"
+        )
+        x["points"] = 300
     return x
 
 
@@ -643,6 +712,63 @@ def RSA(num, enc):
             + ","
             + str(d)
             + "), compute the original message m.</p>"
+        )
+    return x
+
+
+def genRandCheckerboard(num, quote, enc):
+    quote = genQuoteLength(30, 60)
+    # Create a 5x5 Polybius square (combining I/J)
+    alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"  # 25 letters (J is combined with I)
+    alphabet_list = list(alphabet)
+    random.shuffle(alphabet_list)
+
+    # Build checkerboard grid
+    grid = {}
+    reverse_grid = {}
+    for i, letter in enumerate(alphabet_list):
+        row = str(i // 5 + 1)
+        col = str(i % 5 + 1)
+        coords = row + col
+        grid[letter] = coords
+        reverse_grid[coords] = letter
+
+    # Handle J as I
+    grid['J'] = grid['I']
+
+    x = {
+        "cipherString": quote,
+        "cipherType": "checkerboard",
+        "curlang": "en",
+        "editEntry": str(num),
+        "grid": alphabet_list,
+        "replacement": grid,
+        "reverseGrid": reverse_grid,
+    }
+
+    if enc == "E":
+        x["operation"] = "encode"
+        x["points"] = 175
+        x["question"] = (
+            "<p>Encode this sentence with the Checkerboard (Polybius Square) cipher using the grid: "
+            + ''.join(alphabet_list)
+            + " (row-column format, I/J combined).</p>"
+        )
+    elif enc == "D":
+        x["operation"] = "decode"
+        x["points"] = 150
+        x["question"] = (
+            "<p>Decode this sentence which has been encoded with the Checkerboard (Polybius Square) cipher using the grid: "
+            + ''.join(alphabet_list)
+            + " (row-column format, I/J combined).</p>"
+        )
+    elif enc == "C":
+        x["operation"] = "crypt"
+        x["points"] = 200
+        crib_len = min(8, len(quote))
+        x["question"] = (
+            "<p>Decode this sentence which has been encoded with the Checkerboard (Polybius Square) cipher. "
+            + "The first " + str(crib_len) + " letters are: " + quote[:crib_len] + ".</p>"
         )
     return x
 
