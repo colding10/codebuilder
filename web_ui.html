@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeBuilder - Science Olympiad Cipher Test Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .cipher-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .cipher-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .cipher-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.2);
+        }
+
+        .cipher-card.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .cipher-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .cipher-desc {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            padding: 15px 25px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            color: #667eea;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .preset-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .new-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.7em;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+
+            header {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .cipher-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CodeBuilder</h1>
+            <p class="subtitle">Science Olympiad CodeBusters Test Generator</p>
+            <p class="subtitle">2025-2026 Season - All 17 Ciphers Supported!</p>
+        </header>
+
+        <div class="content">
+            <div class="info-box">
+                <h3>New for 2025-2026 Season!</h3>
+                <p>We've added support for the latest Science Olympiad CodeBusters rules, including the new <strong>Checkerboard Cipher</strong>, <strong>Atbash</strong>, and <strong>Running-Key</strong> ciphers!</p>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">17</div>
+                    <div class="stat-label">Cipher Types</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">New Ciphers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Test Presets</div>
+                </div>
+            </div>
+
+            <form id="testForm">
+                <div class="form-group">
+                    <label for="testName">Test Name</label>
+                    <input type="text" id="testName" name="testName" placeholder="Enter test name (e.g., 'Regional Practice 1')" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Test Preset</label>
+                    <div class="preset-buttons">
+                        <button type="button" class="preset-btn" data-preset="all">All Types Exam</button>
+                        <button type="button" class="preset-btn" data-preset="national">National Level</button>
+                        <button type="button" class="preset-btn" data-preset="regional">Regional Level</button>
+                        <button type="button" class="preset-btn" data-preset="aristo">Aristocrat Spam</button>
+                        <button type="button" class="preset-btn" data-preset="patristo">Patristocrat Spam</button>
+                    </div>
+                </div>
+
+                <div class="form-group" id="customCountGroup" style="display: none;">
+                    <label for="customCount">Number of Questions</label>
+                    <input type="number" id="customCount" name="customCount" min="1" max="200" value="100" placeholder="Enter number of questions">
+                </div>
+
+                <div class="form-group">
+                    <h3>Supported Ciphers</h3>
+                    <div class="cipher-grid">
+                        <div class="cipher-card">
+                            <div class="cipher-name">Aristocrat</div>
+                            <div class="cipher-desc">Monoalphabetic substitution with spaces</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Patristocrat</div>
+                            <div class="cipher-desc">Monoalphabetic without spaces</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Affine Cipher</div>
+                            <div class="cipher-desc">Linear mathematical substitution</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Atbash <span class="new-badge">NEW</span></div>
+                            <div class="cipher-desc">Simple reverse alphabet</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Caesar Cipher</div>
+                            <div class="cipher-desc">Fixed shift substitution</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Vigenère Cipher</div>
+                            <div class="cipher-desc">Polyalphabetic keyword cipher</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Hill Cipher (2×2)</div>
+                            <div class="cipher-desc">Matrix-based encryption</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Hill Cipher (3×3)</div>
+                            <div class="cipher-desc">Advanced matrix encryption</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Xenocrypt</div>
+                            <div class="cipher-desc">Spanish aristocrat</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Baconian Cipher</div>
+                            <div class="cipher-desc">Binary A/B encoding</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">RSA</div>
+                            <div class="cipher-desc">Public key cryptography</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Morbit Cipher</div>
+                            <div class="cipher-desc">Morse code with digits</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Pollux Cipher</div>
+                            <div class="cipher-desc">Morse with random mappings</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Porta Cipher</div>
+                            <div class="cipher-desc">Polyalphabetic tableau</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Running-Key <span class="new-badge">NEW</span></div>
+                            <div class="cipher-desc">Continuous text as key</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Rail Fence</div>
+                            <div class="cipher-desc">Transposition cipher</div>
+                        </div>
+                        <div class="cipher-card">
+                            <div class="cipher-name">Checkerboard <span class="new-badge">NEW</span></div>
+                            <div class="cipher-desc">Polybius square cipher</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="generate-btn">Generate Test</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let selectedPreset = '';
+
+        // Preset button handling
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedPreset = this.dataset.preset;
+
+                // Show/hide custom count input for spam presets
+                if (selectedPreset === 'aristo' || selectedPreset === 'patristo') {
+                    document.getElementById('customCountGroup').style.display = 'block';
+                } else {
+                    document.getElementById('customCountGroup').style.display = 'none';
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const testName = document.getElementById('testName').value;
+            const customCount = document.getElementById('customCount').value;
+
+            if (!selectedPreset) {
+                alert('Please select a test preset!');
+                return;
+            }
+
+            const data = {
+                testName: testName,
+                preset: selectedPreset,
+                customCount: customCount
+            };
+
+            // Disable the button during generation
+            const generateBtn = document.querySelector('.generate-btn');
+            const originalText = generateBtn.textContent;
+            generateBtn.textContent = 'Generating Test...';
+            generateBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Success! Test "${testName}" generated with ${result.questionCount} questions.\n\nFile saved to: ${result.path}\n\nYou can download it from the CodeTests folder.`);
+                    // Optionally redirect to download
+                    // window.location.href = `/api/download/${result.filename}`;
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                alert(`Failed to generate test: ${error.message}`);
+            } finally {
+                generateBtn.textContent = originalText;
+                generateBtn.disabled = false;
+            }
+        });
+
+        // Cipher card interaction (optional - for visual feedback)
+        document.querySelectorAll('.cipher-card').forEach(card => {
+            // Make cipher cards keyboard-focusable and expose button behavior to assistive tech
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-pressed', card.classList.contains('selected') ? 'true' : 'false');
+
+            function toggleSelected() {
+                card.classList.toggle('selected');
+                const isSelected = card.classList.contains('selected');
+                card.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+            }
+
+            card.addEventListener('click', function() {
+                toggleSelected();
+            });
+
+            card.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    toggleSelected();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
