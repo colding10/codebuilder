@@ -153,7 +153,12 @@ def list_tests():
 def download_test(filename):
     """Download a generated test file"""
     try:
-        filepath = os.path.join("CodeTests", filename)
+        # Prevent path traversal by restricting to a simple base filename
+        safe_filename = os.path.basename(filename)
+        if safe_filename != filename:
+            return jsonify({"error": "Invalid filename"}), 400
+
+        filepath = os.path.join("CodeTests", safe_filename)
         if os.path.exists(filepath):
             return send_file(filepath, as_attachment=True)
         else:
